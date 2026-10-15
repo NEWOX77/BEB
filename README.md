@@ -1,17 +1,31 @@
 # BEB — « L'énergie des possibles » · film motion design vertical (V2)
 
-Film de marque de **34 s** pour BEB, format **1080 × 1920, 30 i/s**, pour Instagram Reels et LinkedIn.
+Film de marque de **34,9 s** pour BEB, format **1080 × 1920, 30 i/s**, pour Instagram Reels et LinkedIn.
 V2 : **100 % motion design, sans photo** — typographie cinétique en Space Grotesk, aplats noir / orange / blanc
-coupés sur le tempo (120 BPM), compteurs, pictogrammes tracés au trait, carte réelle de la Bretagne.
+coupés sur le tempo de la musique (Justice « Genesis », 117,06 BPM), compteurs, pictogrammes tracés au trait, carte réelle de la Bretagne.
 Réalisé avec [Remotion](https://www.remotion.dev) : animations déterministes, timeline au frame près.
 
 ## Livrables
 
 | Fichier | Contenu |
 |---|---|
-| `out/BEB_V2_energie-des-possibles_1080x1920.mp4` | **Version de diffusion** — H.264, 1080 × 1920, 30 i/s, yuv420p, AAC, lecture rapide en ligne (faststart). |
-| `out/BEB_V2_version-de-travail_1080x1920.mp4` | Même film + zones masquées par les interfaces réseaux sociaux + timecode. |
-| `public/audio/beb-sound-design.wav` | Maquette sonore synthétisée par code, libre de droits, calée sur l'image. |
+| `out/BEB_V2_genesis_1080x1920.mp4` | **Version de diffusion** sur Justice « Genesis » — H.264, 1080 × 1920, 30 i/s, yuv420p, AAC, faststart. |
+| `out/BEB_V2_genesis_version-de-travail_1080x1920.mp4` | Même film + zones masquées par les interfaces réseaux sociaux + timecode. |
+| `public/audio/beb-sfx.wav` | Impacts synchronisés (synthétisés par code) mixés discrètement sous la musique. |
+| `public/audio/beb-sound-design.wav` | Maquette sonore complète libre de droits, utilisée si aucune musique n'est fournie. |
+
+## Musique
+
+Justice — « Genesis » (fichier fourni par BEB, **non versionné** : à déposer dans `public/audio/musique.mp3`).
+Morceau protégé par le droit d'auteur : utilisation sous la responsabilité de BEB (sur Instagram, un compte
+professionnel peut voir la publication rendue muette ou bloquée).
+
+- Tempo mesuré : **117,06 BPM** ; drop à **38,68 s** du morceau (`scripts/analyze_music.py`).
+- La lecture démarre à **35,60 s** (sur un temps) : la fin de la montée accompagne l'accroche et **le drop tombe
+  sur l'apparition du logo** (3,07 s). Réglages dans `src/config/music.ts`.
+- Timeline recalée sur ce tempo (`python3 scripts/retime.py 117.061`) : chaque début de scène tombe à ±15 ms
+  d'un temps ; vérifié sur le fichier final (drop à +16 ms du logo).
+- Mixage final : −14,8 LUFS, crête −2,4 dBFS.
 | `docs/direction-sonore.md` | Direction sonore + feuille de synchronisation. |
 
 La V1 (avec photos des groupes) reste disponible dans l'historique Git (commit `59717e7`).
@@ -51,8 +65,8 @@ Prérequis : Node 18+ (testé avec Node 22), Python 3 + numpy, ffmpeg.
 
 ```bash
 npm install
-npm run render          # → out/BEB_V2_energie-des-possibles_1080x1920.mp4
-npm run render:draft    # → out/BEB_V2_version-de-travail_1080x1920.mp4
+npm run render          # → out/BEB_V2_genesis_1080x1920.mp4
+npm run render:draft    # → out/BEB_V2_genesis_version-de-travail_1080x1920.mp4
 npm run studio          # aperçu interactif
 npm run audio           # régénère la maquette sonore depuis la timeline
 ```
@@ -69,8 +83,8 @@ Sans téléchargement possible de Chrome Headless Shell : `REMOTION_BROWSER_EXEC
 
 ## Contrôles effectués
 
-- 1 020 images, 34,00 s ; chaque séquence aux temps du tableau ci-dessus.
+- 1 046 images, 34,87 s ; temps du tableau ci-dessus multipliés par 1,025 (recalage sur le tempo de « Genesis »).
 - Textes importants dans la zone y 260–1480 et les marges de 96 px ; accents jamais rognés par les masques.
 - Couleurs charte vérifiées après encodage H.264 (écarts de quelques unités).
-- Son : −14 LUFS, crête −1,5 dBTP ; accents à ≤ 1 image de leur repère visuel (détection d'attaques).
+- Son : drop de la musique à +16 ms du logo, scènes à ±15 ms de la grille des temps ; −14,8 LUFS.
 - Le film reste compréhensible sans le son (tous les messages sont à l'écran).

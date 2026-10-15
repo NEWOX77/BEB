@@ -223,7 +223,7 @@ CHORDS = {  # (basse, notes de la nappe en Hz)
 # ---------------------------------------------------------------- arrangement
 # Sections musicales : timeline.json → "music" (accord, grosse caisse, cliquetis, basse)
 duck = np.ones(N)
-for k, sct in enumerate(TL["music"]):
+for k, sct in enumerate([] if SFX_ONLY else TL["music"]):
     a, b = sec(sct["from"]), sec(sct["to"])
     root, chord = CHORDS[sct["chord"]]
     # Nappe (s'ouvre au fil du film)

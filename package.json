@@ -5,8 +5,8 @@
   "description": "BEB — film motion design « L'énergie des possibles » V2, typographie cinétique (Remotion)",
   "scripts": {
     "studio": "remotion studio",
-    "render": "remotion render BEB-Main out/BEB_V2_energie-des-possibles_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=14 --x264-preset=slow",
-    "render:draft": "remotion render BEB-Draft out/BEB_V2_version-de-travail_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=18",
+    "render": "remotion render BEB-Main out/BEB_V2_genesis_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=14 --x264-preset=slow",
+    "render:draft": "remotion render BEB-Draft out/BEB_V2_genesis_version-de-travail_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=18",
     "still": "remotion still BEB-Main out/still.png",
     "audio": "python3 scripts/generate_audio.py",
     "typecheck": "tsc --noEmit",

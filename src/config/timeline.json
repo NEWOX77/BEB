@@ -1,67 +1,67 @@
 {
  "_doc": "Source unique de vérité du montage (30 i/s, 120 BPM : 1 temps = 15 images). Lue par Remotion (src/) ET par scripts/generate_audio.py. Modifier un repère ici décale l'image et le son ensemble.",
  "fps": 30,
- "durationInFrames": 1020,
- "bpm": 120,
+ "durationInFrames": 1046,
+ "bpm": 117.061,
  "scenes": [
   {
    "id": "hook",
    "from": 0,
-   "duration": 90,
+   "duration": 92,
    "title": "00–03 s · Accroche"
   },
   {
    "id": "logo",
-   "from": 90,
-   "duration": 60,
+   "from": 92,
+   "duration": 62,
    "title": "03–05 s · Logo"
   },
   {
    "id": "leader",
-   "from": 150,
-   "duration": 60,
+   "from": 154,
+   "duration": 61,
    "title": "05–07 s · Leader en Bretagne"
   },
   {
    "id": "chiffres",
-   "from": 210,
-   "duration": 120,
+   "from": 215,
+   "duration": 123,
    "title": "07–11 s · Nos chiffres"
   },
   {
    "id": "metiers",
-   "from": 330,
-   "duration": 45,
+   "from": 338,
+   "duration": 46,
    "title": "11–12,5 s · Vente · Location · Maintenance"
   },
   {
    "id": "materiels",
-   "from": 375,
-   "duration": 135,
+   "from": 384,
+   "duration": 139,
    "title": "12,5–17 s · Matériels en location"
   },
   {
    "id": "proximite",
-   "from": 510,
-   "duration": 150,
+   "from": 523,
+   "duration": 154,
    "title": "17–22 s · Proximité · carte des agences"
   },
   {
    "id": "astreinte",
-   "from": 660,
-   "duration": 90,
+   "from": 677,
+   "duration": 92,
    "title": "22–25 s · Astreinte 24/7"
   },
   {
    "id": "reactivite",
-   "from": 750,
-   "duration": 90,
+   "from": 769,
+   "duration": 92,
    "title": "25–28 s · Réactivité"
   },
   {
    "id": "devis",
-   "from": 840,
-   "duration": 180,
+   "from": 861,
+   "duration": 185,
    "title": "28–34 s · Demande de devis"
   }
  ],
@@ -86,19 +86,19 @@
   },
   {
    "id": "hook.w4",
-   "frame": 23,
+   "frame": 24,
    "type": "flash",
    "label": "« URGENCE. »"
   },
   {
    "id": "hook.q",
-   "frame": 30,
+   "frame": 31,
    "type": "impact",
    "label": "« BESOIN D’ÉNERGIE ? »"
   },
   {
    "id": "hook.a",
-   "frame": 60,
+   "frame": 62,
    "type": "hit",
    "label": "« BEB S’EN CHARGE. »"
   },
@@ -106,214 +106,214 @@
    "id": "logo.b1",
    "frame": 92,
    "type": "logo",
-   "label": "Logo · B"
+   "label": "Logo · B — sur le drop de « Genesis »"
   },
   {
    "id": "logo.e",
-   "frame": 99,
+   "frame": 101,
    "type": "tick",
    "label": "Logo · E"
   },
   {
    "id": "logo.b2",
-   "frame": 106,
+   "frame": 109,
    "type": "tick",
    "label": "Logo · B"
   },
   {
    "id": "logo.base",
-   "frame": 116,
+   "frame": 119,
    "type": "tick",
    "label": "Baseline"
   },
   {
    "id": "leader.in",
-   "frame": 150,
+   "frame": 154,
    "type": "drop",
    "label": "« LEADER EN BRETAGNE » · aplat orange"
   },
   {
    "id": "chiffres.in",
-   "frame": 210,
+   "frame": 215,
    "type": "wipe",
    "label": "Barres du E"
   },
   {
    "id": "chiffres.c1",
-   "frame": 214,
+   "frame": 219,
    "type": "count",
    "label": "40 ans",
-   "length": 20
+   "length": 21
   },
   {
    "id": "chiffres.c2",
-   "frame": 229,
+   "frame": 235,
    "type": "count",
    "label": "39 collaborateurs",
-   "length": 20
+   "length": 21
   },
   {
    "id": "chiffres.c3",
-   "frame": 244,
+   "frame": 250,
    "type": "count",
    "label": "1 300 contrats",
-   "length": 20
+   "length": 21
   },
   {
    "id": "chiffres.c4",
-   "frame": 259,
+   "frame": 266,
    "type": "count",
    "label": "15 000 m²",
-   "length": 20
+   "length": 21
   },
   {
    "id": "metiers.in",
-   "frame": 330,
+   "frame": 338,
    "type": "wipe",
    "label": "Barres du E"
   },
   {
    "id": "metiers.w1",
-   "frame": 332,
+   "frame": 340,
    "type": "hit",
    "label": "VENTE"
   },
   {
    "id": "metiers.w2",
-   "frame": 340,
+   "frame": 349,
    "type": "hit",
    "label": "LOCATION"
   },
   {
    "id": "metiers.w3",
-   "frame": 347,
+   "frame": 356,
    "type": "hit",
    "label": "MAINTENANCE"
   },
   {
    "id": "materiels.c1",
-   "frame": 375,
+   "frame": 384,
    "type": "impact",
    "label": "Groupes électrogènes"
   },
   {
    "id": "materiels.c2",
-   "frame": 420,
+   "frame": 431,
    "type": "push",
    "label": "Compresseurs"
   },
   {
    "id": "materiels.c3",
-   "frame": 465,
+   "frame": 477,
    "type": "push",
    "label": "Mâts d’éclairage"
   },
   {
    "id": "proximite.in",
-   "frame": 510,
+   "frame": 523,
    "type": "wipe",
    "label": "Barres du E"
   },
   {
    "id": "proximite.coast",
-   "frame": 516,
+   "frame": 529,
    "type": "riser",
    "label": "Le tracé dessine la côte",
-   "length": 24
+   "length": 25
   },
   {
    "id": "proximite.a1",
-   "frame": 546,
+   "frame": 560,
    "type": "blip",
    "label": "Brest"
   },
   {
    "id": "proximite.a2",
-   "frame": 554,
+   "frame": 568,
    "type": "blip",
    "label": "Saint-Brieuc"
   },
   {
    "id": "proximite.a3",
-   "frame": 561,
+   "frame": 575,
    "type": "blip",
    "label": "Rennes"
   },
   {
    "id": "proximite.a4",
-   "frame": 569,
+   "frame": 583,
    "type": "blip",
    "label": "Lorient"
   },
   {
    "id": "proximite.a5",
-   "frame": 576,
+   "frame": 590,
    "type": "blip",
    "label": "Nantes"
   },
   {
    "id": "proximite.label",
-   "frame": 585,
+   "frame": 600,
    "type": "hit",
    "label": "5 agences"
   },
   {
    "id": "astreinte.in",
-   "frame": 660,
+   "frame": 677,
    "type": "drop",
    "label": "Astreinte · cadran 24 h"
   },
   {
    "id": "astreinte.text",
-   "frame": 675,
+   "frame": 692,
    "type": "hit",
    "label": "« ASTREINTE »"
   },
   {
    "id": "reactivite.in",
-   "frame": 750,
+   "frame": 769,
    "type": "impact",
    "label": "« RÉACTIVITÉ. » · aplat orange"
   },
   {
    "id": "reactivite.slogan",
-   "frame": 795,
+   "frame": 815,
    "type": "hit",
    "label": "« PRÉVOIR LES IMPRÉVUS. »"
   },
   {
    "id": "devis.in",
-   "frame": 840,
+   "frame": 861,
    "type": "wipe",
    "label": "Barres du E"
   },
   {
    "id": "devis.l1",
-   "frame": 846,
+   "frame": 867,
    "type": "hit",
    "label": "« UN PROJET ? »"
   },
   {
    "id": "devis.l2",
-   "frame": 854,
+   "frame": 875,
    "type": "hit",
    "label": "« UNE URGENCE ? »"
   },
   {
    "id": "devis.button",
-   "frame": 870,
+   "frame": 892,
    "type": "impact",
    "label": "Bouton « DEMANDEZ VOTRE DEVIS »"
   },
   {
    "id": "devis.contact",
-   "frame": 885,
+   "frame": 907,
    "type": "tick",
    "label": "Téléphone + site"
   },
   {
    "id": "end",
-   "frame": 1020,
+   "frame": 1046,
    "type": "end",
    "label": "Fin"
   }
@@ -321,135 +321,135 @@
  "music": [
   {
    "from": 0,
-   "to": 30,
+   "to": 31,
    "chord": "Dm",
    "kick": false,
    "hats": 0,
    "bass": 0
   },
   {
-   "from": 30,
-   "to": 90,
+   "from": 31,
+   "to": 92,
    "chord": "Dm",
    "kick": true,
    "hats": 0.5,
    "bass": 0.7
   },
   {
-   "from": 90,
-   "to": 150,
+   "from": 92,
+   "to": 154,
    "chord": "Bb",
    "kick": false,
    "hats": 0,
    "bass": 0
   },
   {
-   "from": 150,
-   "to": 270,
+   "from": 154,
+   "to": 277,
    "chord": "Dm",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 270,
-   "to": 330,
+   "from": 277,
+   "to": 338,
    "chord": "C",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 330,
-   "to": 390,
+   "from": 338,
+   "to": 400,
    "chord": "Bb",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 390,
-   "to": 450,
+   "from": 400,
+   "to": 461,
    "chord": "F",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 450,
-   "to": 510,
+   "from": 461,
+   "to": 523,
    "chord": "C",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 510,
-   "to": 570,
+   "from": 523,
+   "to": 584,
    "chord": "Dm",
    "kick": true,
    "hats": 0.6,
    "bass": 0.8
   },
   {
-   "from": 570,
-   "to": 630,
+   "from": 584,
+   "to": 646,
    "chord": "Bb",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 630,
-   "to": 660,
+   "from": 646,
+   "to": 677,
    "chord": "C",
    "kick": true,
    "hats": 1.2,
    "bass": 1
   },
   {
-   "from": 660,
-   "to": 750,
+   "from": 677,
+   "to": 769,
    "chord": "Dm",
    "kick": true,
    "hats": 0.7,
    "bass": 1
   },
   {
-   "from": 750,
-   "to": 795,
+   "from": 769,
+   "to": 815,
    "chord": "Bb",
    "kick": true,
    "hats": 1.2,
    "bass": 1
   },
   {
-   "from": 795,
-   "to": 840,
+   "from": 815,
+   "to": 861,
    "chord": "A",
    "kick": true,
    "hats": 1.2,
    "bass": 1
   },
   {
-   "from": 840,
-   "to": 930,
+   "from": 861,
+   "to": 953,
    "chord": "Dm",
    "kick": true,
    "hats": 1,
    "bass": 1
   },
   {
-   "from": 930,
-   "to": 990,
+   "from": 953,
+   "to": 1015,
    "chord": "Bb",
    "kick": true,
    "hats": 0.6,
    "bass": 0.8
   },
   {
-   "from": 990,
-   "to": 1020,
+   "from": 1015,
+   "to": 1046,
    "chord": "Dm",
    "kick": false,
    "hats": 0,

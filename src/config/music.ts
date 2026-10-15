@@ -6,11 +6,14 @@
  */
 export const MUSIC = {
   candidates: ['audio/musique.mp3', 'audio/musique.m4a', 'audio/musique.wav'],
-  /** Point de départ dans le morceau (secondes) — à caler pour que le drop tombe sur le logo (3 s). */
-  startFrom: 0,
-  volume: 1,
+  /**
+   * Point de départ dans le morceau (secondes). Justice « Genesis » : 117,06 BPM, drop à 38,68 s.
+   * Départ à 35,60 s (sur un temps) → le drop tombe sur l'apparition du logo (scène « logo », 3 s).
+   */
+  startFrom: 35.602,
+  volume: 0.9,
   /** Fondu de sortie sur les dernières images. */
   fadeOutFrames: 24,
   /** Volume des impacts synchronisés par-dessus la musique (0 pour les couper). */
-  sfxVolume: 0.45,
+  sfxVolume: 0.35,
 };
