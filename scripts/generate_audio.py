@@ -20,7 +20,11 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 TL = json.loads((ROOT / "src/config/timeline.json").read_text())
-OUT = ROOT / "public/audio/beb-sound-design.wav"
+import sys
+
+# --sfx-only : uniquement les impacts synchronisés (à poser par-dessus une musique du commerce)
+SFX_ONLY = "--sfx-only" in sys.argv
+OUT = ROOT / ("public/audio/beb-sfx.wav" if SFX_ONLY else "public/audio/beb-sound-design.wav")
 
 SR = 48000
 FPS = TL["fps"]
@@ -317,6 +321,8 @@ def reverb(L, R, seconds=1.6):
     return out
 
 
+if SFX_ONLY:
+    beat_bus, pad_bus = Bus(), Bus()
 wl, wr = reverb(verb_send.L + 0.25 * pad_bus.L, verb_send.R + 0.25 * pad_bus.R)
 L = dry.L + beat_bus.L + pad_bus.L * duck + wl * 0.5
 R = dry.R + beat_bus.R + pad_bus.R * duck + wr * 0.5
@@ -344,7 +350,7 @@ with tempfile.TemporaryDirectory() as tmp:
     # Normalisation EBU R128 pour les réseaux sociaux
     subprocess.run(
         ["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw),
-         "-af", "loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000",
+         "-af", ("loudnorm=I=-20:TP=-3:LRA=11" if SFX_ONLY else "loudnorm=I=-14:TP=-1.5:LRA=11") + ",aresample=48000",
          "-t", f"{DUR:.3f}", "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le", str(OUT)],
         check=True,
     )

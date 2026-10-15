@@ -10,7 +10,9 @@
     "still": "remotion still BEB-Main out/still.png",
     "audio": "python3 scripts/generate_audio.py",
     "typecheck": "tsc --noEmit",
-    "map": "node scripts/extract_map.mjs"
+    "map": "node scripts/extract_map.mjs",
+    "audio:sfx": "python3 scripts/generate_audio.py --sfx-only",
+    "analyze": "python3 scripts/analyze_music.py public/audio/musique.mp3"
   },
   "dependencies": {
     "@remotion/cli": "4.0.535",

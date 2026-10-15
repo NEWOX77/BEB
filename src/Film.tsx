@@ -1,10 +1,11 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, getStaticFiles, staticFile} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, getStaticFiles, interpolate, staticFile} from 'remotion';
+import {MUSIC} from './config/music';
 import {COLORS} from './config/brand';
 import {EBarWipe} from './components/EBarWipe';
 import {Guides} from './components/Guides';
 import {useFontsReady} from './lib/fonts';
-import {cue, scene} from './lib/timeline';
+import {TIMELINE, cue, scene} from './lib/timeline';
 import {Astreinte} from './scenes/Astreinte';
 import {Chiffres} from './scenes/Chiffres';
 import {Devis} from './scenes/Devis';
@@ -22,6 +23,7 @@ export type FilmProps = {
 };
 
 export const AUDIO_FILE = 'audio/beb-sound-design.wav';
+export const SFX_FILE = 'audio/beb-sfx.wav';
 
 const SCENES: [string, string, React.FC][] = [
   ['hook', 'Accroche', Hook],
@@ -46,7 +48,9 @@ const WIPES: [string, string][] = [
 
 export const Film: React.FC<FilmProps> = ({guides}) => {
   const ready = useFontsReady();
-  const hasAudio = getStaticFiles().some((f) => f.name === AUDIO_FILE);
+  const files = getStaticFiles().map((f) => f.name);
+  const music = MUSIC.candidates.find((c) => files.includes(c));
+  const total = TIMELINE.durationInFrames;
   if (!ready) return <AbsoluteFill style={{background: COLORS.black}} />;
   return (
     <AbsoluteFill style={{background: COLORS.black}}>
@@ -61,7 +65,18 @@ export const Film: React.FC<FilmProps> = ({guides}) => {
       {WIPES.map(([id, color]) => (
         <EBarWipe key={id} at={cue(id)} color={color} />
       ))}
-      {hasAudio ? <Audio src={staticFile(AUDIO_FILE)} /> : null}
+      {music ? (
+        <>
+          <Audio
+            src={staticFile(music)}
+            startFrom={Math.round(MUSIC.startFrom * 30)}
+            volume={(f) => MUSIC.volume * interpolate(f, [total - MUSIC.fadeOutFrames, total], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}
+          />
+          {files.includes(SFX_FILE) && MUSIC.sfxVolume > 0 ? <Audio src={staticFile(SFX_FILE)} volume={MUSIC.sfxVolume} /> : null}
+        </>
+      ) : files.includes(AUDIO_FILE) ? (
+        <Audio src={staticFile(AUDIO_FILE)} />
+      ) : null}
       {guides ? <Guides /> : null}
     </AbsoluteFill>
   );
