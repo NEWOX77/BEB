@@ -6,7 +6,7 @@ import {TIMELINE} from './lib/timeline';
 
 export const RemotionRoot: React.FC = () => (
   <>
-    {/* Version principale : uniquement des médias réels fournis, sans repères. */}
+    {/* Version de diffusion. */}
     <Composition
       id="BEB-Main"
       component={Film}
@@ -14,9 +14,9 @@ export const RemotionRoot: React.FC = () => (
       fps={VIDEO.fps}
       width={VIDEO.width}
       height={VIDEO.height}
-      defaultProps={{variant: 'main', guides: false} satisfies FilmProps}
+      defaultProps={{guides: false} satisfies FilmProps}
     />
-    {/* Version de travail : emplacements des photos terrain à fournir + zones d'interface + timecode. */}
+    {/* Version de travail : zones d'interface réseaux sociaux + timecode. */}
     <Composition
       id="BEB-Draft"
       component={Film}
@@ -24,7 +24,7 @@ export const RemotionRoot: React.FC = () => (
       fps={VIDEO.fps}
       width={VIDEO.width}
       height={VIDEO.height}
-      defaultProps={{variant: 'draft', guides: true} satisfies FilmProps}
+      defaultProps={{guides: true} satisfies FilmProps}
     />
   </>
 );

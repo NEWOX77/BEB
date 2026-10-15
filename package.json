@@ -2,15 +2,15 @@
   "name": "beb-motion",
   "version": "1.0.0",
   "private": true,
-  "description": "BEB — film de marque motion design « L'énergie des possibles » (Remotion)",
+  "description": "BEB — film motion design « L'énergie des possibles » V2, typographie cinétique (Remotion)",
   "scripts": {
     "studio": "remotion studio",
-    "render": "remotion render BEB-Main out/BEB_energie-des-possibles_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=14 --x264-preset=slow",
-    "render:draft": "remotion render BEB-Draft out/BEB_version-de-travail_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=18",
+    "render": "remotion render BEB-Main out/BEB_V2_energie-des-possibles_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=14 --x264-preset=slow",
+    "render:draft": "remotion render BEB-Draft out/BEB_V2_version-de-travail_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=18",
     "still": "remotion still BEB-Main out/still.png",
     "audio": "python3 scripts/generate_audio.py",
-    "cutouts": "python3 scripts/make_cutouts.py",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "map": "node scripts/extract_map.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.535",
@@ -25,6 +25,8 @@
   "devDependencies": {
     "@fontsource/space-grotesk": "5.2.10",
     "@types/react": "19.1.12",
-    "typescript": "5.9.2"
+    "topojson-client": "3.1.0",
+    "typescript": "5.9.2",
+    "world-atlas": "2.0.2"
   }
 }

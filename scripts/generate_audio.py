@@ -1,4 +1,4 @@
-"""Maquette sonore électro-industrielle BEB — synthétisée entièrement par code.
+"""Maquette sonore électro-industrielle BEB (V2, 120 BPM) — synthétisée entièrement par code.
 
 Aucun échantillon, aucune boucle, aucune musique tierce : chaque son (pulsation, basse,
 impacts, démarreur, nappe) est calculé ici à partir d'oscillateurs et de bruit.
@@ -207,116 +207,99 @@ def pad(freqs, length_s, cutoff=1400, attack=0.6, release=0.8):
 
 
 # ---------------------------------------------------------------- notes
-D2, F2, A2, BB1, C2, A1 = 73.42, 87.31, 110.0, 58.27, 65.41, 55.0
-D3, F3, A3, BB2, C3, E3, G3, E4 = 146.83, 174.61, 220.0, 116.54, 130.81, 164.81, 196.0, 329.63
+NOTE = {"D": 73.42, "E": 82.41, "F": 87.31, "G": 98.0, "A": 110.0, "Bb": 116.54, "C": 130.81, "C#": 138.59}
+CHORDS = {  # (basse, notes de la nappe en Hz)
+    "Dm": (73.42, [146.83, 174.61, 220.0, 293.66]),
+    "Bb": (58.27, [116.54, 146.83, 174.61, 233.08]),
+    "C": (65.41, [130.81, 164.81, 196.0, 261.63]),
+    "F": (87.31, [174.61, 220.0, 261.63, 349.23]),
+    "A": (55.0, [110.0, 138.59, 164.81, 220.0]),
+}
 
 # ---------------------------------------------------------------- arrangement
-t_beat0 = cue_t("beat.start")
-t_sig = cue_t("signature.in")
-t_cta1 = cue_t("cta.l1")
-t_end = DUR
-
-# Nappe / drone : tension dès l'accroche, ouverture progressive
-pad_bus.add(pad([D2, A2], 3.4, cutoff=500, attack=0.02, release=0.6), 0.0, 0.55)
-pad_bus.add(pad([D2, A2, D3], sec(210) - 3.0 + 0.6, cutoff=800, attack=0.4), 3.0, 0.5)
-sections = [  # (début, fin, accord, basse, coupure filtre)
-    (sec(210), sec(300), [D3, F3, A3], D2, 1200),
-    (sec(300), sec(390), [BB2, D3, F3], BB1, 1500),
-    (sec(390), sec(480), [C3, E3, G3], C2, 1800),
-    (sec(480), sec(570), [D3, F3, A3], D2, 2200),
-    (sec(570), t_sig, [A2, E3, A3], A1, 2600),
-]
-for a, b, chord, _, cut in sections:
-    pad_bus.add(pad(chord, b - a + 0.5, cutoff=cut, attack=0.08, release=0.45), a, 0.42)
-# Signature : respiration, accord suspendu
-pad_bus.add(pad([D2, A2, E4, D3], cue_t("cta.in") - t_sig + 0.8, cutoff=1600, attack=0.5, release=0.7), t_sig, 0.6)
-# Appel à l'action : résolution
-pad_bus.add(pad([D2, D3, F3, A3], t_end - cue_t("cta.in"), cutoff=1900, attack=0.4, release=1.0), cue_t("cta.in"), 0.55)
-
-# Pulsation mécanique : grosse caisse sur chaque temps, basse en croches, cliquetis en doubles-croches
+# Sections musicales : timeline.json → "music" (accord, grosse caisse, cliquetis, basse)
 duck = np.ones(N)
-
-
-def beats(a, b, step):
-    k = np.arange(np.ceil((a - t_beat0) / step - 1e-6), np.floor((b - t_beat0) / step - 1e-6) + 1)
-    return t_beat0 + k * step
-
-
-for tb in beats(t_beat0, sec(645), BEAT):
-    lvl = 0.55 if tb < sec(210) else 0.9
-    beat_bus.add(kick(lvl), tb, 0.9)
-    i0 = int(tb * SR)
-    dn = int(0.22 * SR)
-    duck[i0 : i0 + dn] = np.minimum(duck[i0 : i0 + dn], 0.35 + 0.65 * np.linspace(0, 1, len(duck[i0 : i0 + dn])) ** 0.7)
-
-for a, b, _, root, _ in sections:
-    for k, tb in enumerate(beats(a, min(b, sec(645)), BEAT / 2)):
-        n = int(BEAT / 2 * SR * 0.92)
-        note = saw(root * (2 if k % 4 == 3 else 1), n, 16)
-        note = np.tanh(1.8 * fft_filter(note, hi=900 + 300 * (k % 2))) * adsr(n, 0.004, 0.06)
-        beat_bus.add(note, tb, 0.42)
-
-for k, tb in enumerate(beats(sec(210), sec(645), BEAT / 4)):
-    accent = 1.0 if k % 4 == 2 else 0.45
-    if tb >= sec(480):
-        accent *= 1.2  # le montage terrain pousse un peu plus
-    beat_bus.add(tick(1.0 if k % 2 else 0.8), tb, 0.16 * accent, pan=0.25 if k % 2 else -0.25)
-
-# Retour de la pulsation, plus douce, sur l'appel à l'action
-for tb in beats(t_cta1, sec(885), BEAT):
-    beat_bus.add(kick(0.6), tb, 0.75)
+for k, sct in enumerate(TL["music"]):
+    a, b = sec(sct["from"]), sec(sct["to"])
+    root, chord = CHORDS[sct["chord"]]
+    # Nappe (s'ouvre au fil du film)
+    cut = 900 + 1800 * (sct["from"] / TL["durationInFrames"])
+    pad_bus.add(pad(chord, b - a + 0.35, cutoff=cut, attack=0.03, release=0.3), a, 0.34)
+    if sct["kick"]:
+        for tb in np.arange(a, b - 1e-6, BEAT):
+            beat_bus.add(kick(0.95), tb, 0.9)
+            i0 = int(tb * SR)
+            dn = min(int(0.2 * SR), N - i0)
+            duck[i0 : i0 + dn] = np.minimum(duck[i0 : i0 + dn], 0.3 + 0.7 * np.linspace(0, 1, dn) ** 0.7)
+    if sct["bass"]:
+        for j, tb in enumerate(np.arange(a, b - 1e-6, BEAT / 2)):
+            n = int(BEAT / 2 * SR * 0.9)
+            f = root * (2 if j % 4 == 3 else 1)
+            note = np.tanh(1.9 * fft_filter(saw(f, n, 16), hi=1000 + 300 * (j % 2))) * adsr(n, 0.004, 0.05)
+            beat_bus.add(note, tb, 0.4 * sct["bass"])
+    if sct["hats"]:
+        for j, tb in enumerate(np.arange(a, b - 1e-6, BEAT / 4)):
+            acc = 1.0 if j % 4 == 2 else 0.45
+            beat_bus.add(tick(1.0 if j % 2 else 0.8), tb, 0.15 * acc * sct["hats"], pan=0.25 if j % 2 else -0.25)
+        # claquement sur les temps 2 et 4
+        for j, tb in enumerate(np.arange(a + BEAT, b - 1e-6, 2 * BEAT)):
+            n = int(0.25 * SR)
+            clap = fft_filter(noise(n), lo=900, hi=6000) * env_exp(n, 0.05)
+            beat_bus.add(clap, tb, 0.22 * sct["hats"])
+            verb_send.add(clap, tb, 0.12 * sct["hats"])
 
 # Accents synchronisés sur les repères (pas de whoosh systématique)
 for c in TL["cues"]:
     t0 = sec(c["frame"])
     kind = c["type"]
-    if kind == "impact":
+    if kind == "flash":
+        dry.add(impact(0.5), t0, 0.55)
+        dry.add(tick(0.8, 60), t0, 0.4)
+        dry.add(metal(240 + 40 * int(c["id"][-1]), 0.6), t0, 0.35)
+    elif kind == "impact":
         dry.add(impact(0.9), t0, 0.8)
-        dry.add(metal(160), t0, 0.5, pan=-0.15)
-        verb_send.add(metal(160), t0, 0.6)
-    elif kind == "riser":
-        dry.add(riser(sec(c["length"])), t0, 0.45)
-    elif kind == "cut" and c["id"] == "reveal.open":
-        dry.add(tick(0.7, 60), t0, 0.5)
-        dry.add(kick(0.5), t0, 0.5)
-    elif kind == "cut":
-        dry.add(tick(0.6, 50), t0, 0.3)
-    elif kind == "starter":
-        dry.add(starter(sec(c["length"])), t0, 0.55)
-    elif kind == "engine":
-        dry.add(engine(3.2), t0, 0.75)
-        dry.add(impact(1.2), t0, 0.7)
-        verb_send.add(impact(1.0), t0, 0.35)
+        dry.add(metal(160), t0, 0.45, pan=-0.15)
+        verb_send.add(metal(160), t0, 0.5)
+    elif kind == "hit":
+        dry.add(impact(0.7), t0, 0.6)
+        dry.add(metal(200), t0, 0.3, pan=0.2)
+        verb_send.add(metal(200), t0, 0.4)
     elif kind == "logo":
+        dry.add(impact(1.3), t0, 0.9)
         dry.add(metal(220, 1.8), t0, 0.7, pan=0.1)
         dry.add(metal(330, 1.2), t0, 0.35, pan=-0.1)
         verb_send.add(metal(220, 1.8), t0, 0.8)
-        dry.add(kick(0.7), t0, 0.6)
     elif kind == "tick":
-        dry.add(tick(0.9, 50), t0, 0.35)
+        dry.add(tick(0.9, 50), t0, 0.45)
+        dry.add(kick(0.5), t0, 0.35)
         verb_send.add(tick(0.9, 50), t0, 0.3)
-    elif kind == "hit":
-        dry.add(impact(0.8), t0, 0.7)
-        dry.add(metal(190), t0, 0.35, pan=0.2)
-        verb_send.add(metal(190), t0, 0.45)
-    elif kind == "blip":
-        dry.add(blip(1180 + 70 * int(c["id"][-1])), t0, 0.22, pan=-0.4 + 0.2 * int(c["id"][-1]))
-        verb_send.add(blip(1180), t0, 0.25)
     elif kind == "drop":
-        dry.add(impact(2.2), t0, 1.0)
-        dry.add(metal(110, 2.4), t0, 0.5)
-        verb_send.add(impact(1.6), t0, 0.6)
-    elif kind == "swell":
-        n = int(sec(15) * SR)
-        sw = fft_filter(noise(n), lo=200, hi=2400) * np.linspace(0, 1, n) ** 3
-        dry.add(sw, t0, 0.18)
-
-# Ronronnement discret du groupe au ralenti, sous la révélation et les expertises (texture)
-idle_a, idle_b = cue_t("reveal.engine") + 1.5, sec(480)
-n = int((idle_b - idle_a) * SR)
-idle = engine(idle_b - idle_a, fade=0.01) * adsr(n, 0.8, 1.2)
-dry.add(fft_filter(idle, hi=300), idle_a, 0.22)
-
+        dry.add(impact(1.8), t0, 1.0)
+        dry.add(metal(110, 2.0), t0, 0.45)
+        verb_send.add(impact(1.4), t0, 0.5)
+    elif kind == "wipe":
+        n = int(sec(10) * SR)
+        sw = fft_filter(noise(n), lo=400, hi=5000) * np.linspace(0, 1, n) ** 2
+        dry.add(sw, t0 - sec(10), 0.22)
+        dry.add(impact(0.6), t0, 0.5)
+    elif kind == "push":
+        n = int(sec(10) * SR)
+        sw = fft_filter(noise(n), lo=600, hi=4000) * np.sin(np.linspace(0, np.pi, n)) ** 2
+        dry.add(sw, t0 - sec(10), 0.2, pan=0.3)
+        dry.add(impact(0.6), t0, 0.5)
+    elif kind == "count":
+        # cliquetis de compteur qui ralentit avec le défilement des chiffres
+        L = c.get("length", 20)
+        for j in range(12):
+            tt = (1 - (1 - j / 12) ** 0.45) * sec(L)
+            dry.add(tick(1.2, 20), t0 + tt, 0.22 * (1 - j / 14), pan=-0.2 + 0.4 * (j % 2))
+        dry.add(impact(0.6), t0, 0.55)
+    elif kind == "riser":
+        dry.add(riser(sec(c["length"])), t0, 0.4)
+    elif kind == "blip":
+        k = int(c["id"][-1])
+        dry.add(blip(1100 + 110 * k), t0, 0.3, pan=-0.5 + 0.25 * (k - 1))
+        verb_send.add(blip(1100 + 110 * k), t0, 0.3)
 
 # ---------------------------------------------------------------- réverbération + mixage
 def reverb(L, R, seconds=1.6):

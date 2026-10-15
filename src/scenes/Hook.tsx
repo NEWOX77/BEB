@@ -1,98 +1,77 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
-import {COLORS, LAYOUT, withAlpha} from '../config/brand';
+import {COLORS, FONT_FAMILY, LAYOUT, withAlpha} from '../config/brand';
 import {HOOK} from '../config/content';
+import {Accent} from '../components/Accent';
 import {EnergyLayer, EnergyPath} from '../components/EnergyPath';
-import {Photo, lerpView} from '../components/Photo';
+import {Label, Slam} from '../components/Kinetic';
 import {RevealLines} from '../components/RevealLines';
-import {fitFontSize} from '../lib/fonts';
+import {fitFontSize, measure} from '../lib/fonts';
 import {EASE, progress} from '../lib/motion';
 import {cue} from '../lib/timeline';
 
-/** Ligne horizontale où l'accroche se referme (et où la révélation s'ouvrira). */
-export const SPLIT_Y = 960;
+// Un aplat différent à chaque mot : noir, orange, blanc, noir
+const LOOKS = [
+  {bg: COLORS.black, ink: COLORS.white, label: withAlpha(COLORS.white, 0.6)},
+  {bg: COLORS.orange, ink: COLORS.black, label: COLORS.black},
+  {bg: COLORS.white, ink: COLORS.black, label: COLORS.orange},
+  {bg: COLORS.black, ink: COLORS.orange, label: withAlpha(COLORS.white, 0.6)},
+];
 
-/**
- * 00–03 s — ACCROCHE
- * Détail serré du 330 kVA, une lumière rasante révèle la matière. Texte franc dès la 1re seconde.
- * Fin : le tracé traverse l'écran et l'image se referme sur lui.
- */
+/** 00–03 s — Quatre contextes en rafale sur les croches, la question, la réponse. */
 export const Hook: React.FC = () => {
   const frame = useCurrentFrame();
-  const photoFrame = {x: 0, y: 0, w: 1080, h: 1360};
-  const view = lerpView(HOOK.viewFrom, HOOK.viewTo, progress(frame, 0, 90, EASE.drift));
+  const wordCues = ['hook.w1', 'hook.w2', 'hook.w3', 'hook.w4'].map(cue);
+  const qAt = cue('hook.q');
+  const aAt = cue('hook.a');
+  const idx = wordCues.filter((c) => frame >= c).length - 1;
+  const fsWord = Math.min(...HOOK.words.map((w) => fitFontSize(w, LAYOUT.contentWidth, 700, 210, -0.02)));
+  const fsQ = fitFontSize(HOOK.question[1], LAYOUT.contentWidth, 700, 170, -0.015);
+  const fsA = fitFontSize(HOOK.answer[1], LAYOUT.contentWidth, 700, 170, -0.015);
+  const look = frame < qAt ? LOOKS[Math.max(0, idx)] : LOOKS[0];
 
-  // Lumière rasante : un front lumineux diagonal balaie le métal et le laisse éclairé
-  const sweep = progress(frame, 0, 58, EASE.inOut);
-  const pos = -30 + sweep * 160; // % le long du dégradé
-  const glint = 1 - progress(frame, 50, 16, EASE.out);
+  const word = HOOK.words[Math.max(0, idx)];
+  const wordW = measure(word, fsWord, 700, -0.02);
+  const barP = frame < qAt ? progress(frame, wordCues[Math.max(0, idx)], 7, EASE.out) : 0;
 
-  // Typo : corps calculés pour tenir dans la colonne de 888 px
-  const fs1 = fitFontSize(HOOK.lines[0], LAYOUT.contentWidth, 700, 168, -0.015);
-  const fs2 = Math.min(fs1 * 0.78, fitFontSize(HOOK.lines2.reduce((a, b) => (a.length > b.length ? a : b)), LAYOUT.contentWidth, 700, 130, -0.015));
-  const textTop = 1010;
-
-  // Le tracé traverse l'écran, puis l'image se referme sur lui
-  const lineP = progress(frame, cue('hook.charge') + 2, 18, EASE.inOut);
-  const close = progress(frame, 72, 18, EASE.inOut);
-
+  const qUnder = 700 + 2 * fsQ * 0.92 + 30;
   return (
-    <AbsoluteFill style={{background: COLORS.black}}>
-      <AbsoluteFill
-        style={{
-          clipPath: `inset(${(SPLIT_Y * close).toFixed(2)}px 0 ${((1920 - SPLIT_Y) * close).toFixed(2)}px 0)`,
-          isolation: 'isolate',
-          background: COLORS.black,
-        }}
-      >
-        {/* Matière dans l'ombre */}
-        <Photo media={HOOK.media} view={view} frame={photoFrame} blend="lighten" filter="brightness(0.16) contrast(1.15)" />
-        {/* Matière révélée par la lumière */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            WebkitMaskImage: `linear-gradient(118deg, #000 ${pos - 22}%, transparent ${pos + 8}%)`,
-            maskImage: `linear-gradient(118deg, #000 ${pos - 22}%, transparent ${pos + 8}%)`,
-            mixBlendMode: 'lighten',
-          }}
-        >
-          <Photo media={HOOK.media} view={view} frame={photoFrame} filter="contrast(1.06) saturate(1.04)" />
-        </div>
-        {/* Reflet sur l'arête du front lumineux */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: 1080,
-            height: photoFrame.h,
-            background: `linear-gradient(118deg, transparent ${pos - 14}%, ${withAlpha(COLORS.white, 0.16)} ${pos - 4}%, transparent ${pos + 6}%)`,
-            mixBlendMode: 'screen',
-            opacity: glint,
-          }}
-        />
-        {/* Fondu bas vers le noir charte, sous le texte */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 760,
-            width: 1080,
-            height: photoFrame.h - 760 + 2,
-            background: `linear-gradient(180deg, ${withAlpha(COLORS.black, 0)} 0%, ${withAlpha(COLORS.black, 0.85)} 55%, ${COLORS.black} 100%)`,
-          }}
-        />
-        <div style={{position: 'absolute', left: LAYOUT.marginX, top: textTop}}>
-          <RevealLines lines={HOOK.lines} start={cue('hook.l1')} fontSize={fs1} duration={14} />
-          <div style={{height: 14}} />
-          <RevealLines lines={HOOK.lines2} start={cue('hook.l2')} fontSize={fs2} stagger={4} duration={15} />
-        </div>
-      </AbsoluteFill>
+    <AbsoluteFill style={{background: look.bg}}>
+      {frame < qAt ? (
+        <>
+          <Label color={look.label} style={{position: 'absolute', left: LAYOUT.marginX, top: 640}}>
+            {HOOK.label}
+          </Label>
+          <Slam key={idx} at={wordCues[Math.max(0, idx)]} from={1.18} duration={7} style={{position: 'absolute', left: LAYOUT.marginX, top: 720}}>
+            <div style={{fontFamily: FONT_FAMILY, fontWeight: 700, fontSize: fsWord, letterSpacing: '-0.02em', lineHeight: 1, color: look.ink, whiteSpace: 'nowrap'}}>{word}</div>
+          </Slam>
+          <div style={{position: 'absolute', left: LAYOUT.marginX, top: 720 + fsWord * 1.02, width: wordW * barP, height: 14, background: idx === 1 ? COLORS.black : COLORS.orange}} />
+        </>
+      ) : null}
 
-      <EnergyLayer>
-        <EnergyPath d={`M -20 ${SPLIT_Y} L 1100 ${SPLIT_Y}`} to={lineP} width={6} />
-      </EnergyLayer>
+      {frame >= qAt && frame < aAt + 2 ? (
+        <div style={{position: 'absolute', left: LAYOUT.marginX, top: 700}}>
+          <RevealLines lines={HOOK.question} start={qAt} fontSize={fsQ} stagger={5} duration={12} exitAt={aAt - 4} exitDuration={6} />
+        </div>
+      ) : null}
+      {frame >= qAt && frame < aAt ? (
+        <EnergyLayer>
+          <EnergyPath d={`M ${LAYOUT.marginX} ${qUnder} L ${LAYOUT.marginX + LAYOUT.contentWidth} ${qUnder}`} to={progress(frame, qAt + 6, 14, EASE.out)} width={8} />
+        </EnergyLayer>
+      ) : null}
+
+      {frame >= aAt ? (
+        <>
+          <Slam at={aAt} from={1.15} duration={8} style={{position: 'absolute', left: LAYOUT.marginX, top: 700}}>
+            <div style={{fontFamily: FONT_FAMILY, fontWeight: 700, fontSize: fsA, letterSpacing: '-0.015em', lineHeight: 0.92, color: COLORS.white}}>{HOOK.answer[0]}</div>
+          </Slam>
+          <Slam at={aAt + 5} from={1.15} duration={8} style={{position: 'absolute', left: LAYOUT.marginX, top: 700 + fsA * 0.92}}>
+            <div style={{fontFamily: FONT_FAMILY, fontWeight: 700, fontSize: fsA, letterSpacing: '-0.015em', lineHeight: 0.92, color: COLORS.white, whiteSpace: 'nowrap'}}>
+              <Accent text={HOOK.answer[1]} />
+            </div>
+          </Slam>
+        </>
+      ) : null}
     </AbsoluteFill>
   );
 };

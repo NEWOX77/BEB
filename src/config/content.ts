@@ -1,141 +1,92 @@
 /**
- * Tous les textes et médias du film, modifiables ici sans toucher aux animations.
+ * Tous les textes du film, modifiables ici sans toucher aux animations.
  *
- * Convention : un passage entre crochets est mis en accent orange, ex. 'D’[ÉNERGIE.]'
- * (règle unique : le mot-clé de chaque titre, comme le « E » orange du logo).
+ * Convention : un passage entre crochets passe en accent orange, ex. 'D’[ÉNERGIE] ?'.
  * Espaces :   = insécable,   = fine insécable (typographie française).
  *
- * Sources des informations factuelles (aucune donnée inventée) :
- * - « neuf et occasion », « de 40 à 2 500 kVA », « SAV 24h/24 et 7j/7 », « 5 agences »,
- *   villes, téléphone : site groupe-beb.com (fichier HTML fourni).
- * - « groupe-beb.com » : également imprimé sur les machines photographiées.
+ * Sources — site groupe-beb.com (fichier HTML fourni) :
+ *  chiffres des compteurs (data-to-value) : 40 années d’expérience, 39 collaborateurs,
+ *  1 300 contrats d’entretien dans l’ouest, 15 000 m² d’atelier et de stockage, 5 agences ;
+ *  « Solutions clé en main », « vente, location, maintenance », « Groupes électrogènes de 40 à 2 500 kVA,
+ *  insonorisé, stage V », « Compresseurs thermiques […] de 5 000 à 25 000 litres/mn »,
+ *  « Mâts d’éclairage autonomes […] BTP, industrie, évènementiel », accessoires,
+ *  « URGENCE H24 7/7 », « techniciens pouvant intervenir 24h/24 et 7j/7 », « PRÉVOIR LES IMPRÉVUS »,
+ *  « quel que soit le contexte », « Demander un devis », 09 73 44 55 55, villes des agences.
+ *  « Leader en Bretagne » : affirmation fournie par BEB (à pouvoir justifier en cas de diffusion publicitaire).
  */
 
-export type MediaKey = keyof typeof MEDIA;
-
-/** Photos réelles fournies (dimensions en pixels source). */
-export const MEDIA = {
-  g330_34: {src: 'media/beb-330kva-34-fond-noir.jpg', w: 2000, h: 1329, label: 'Groupe 330 kVA (305-13), vue 3/4'},
-  g66_34: {src: 'media/beb-66kva-34-fond-noir.jpg', w: 2000, h: 1331, label: 'Groupe 66 kVA (60-04), vue 3/4'},
-  g66_34_cut: {src: 'media/beb-66kva-34-detoure.png', w: 2000, h: 1331, label: 'Groupe 66 kVA, vue 3/4, détouré'},
-  g66_face: {src: 'media/beb-66kva-face-fond-noir.jpg', w: 2000, h: 1331, label: 'Groupe 66 kVA, face'},
-  g66_face_cut: {src: 'media/beb-66kva-face-detoure.png', w: 2000, h: 1331, label: 'Groupe 66 kVA, face, détouré'},
-} as const;
-
-/** Cadrage d'une photo : point source (cx, cy) placé au centre du cadre, à l'échelle `scale`. */
-export type View = {cx: number; cy: number; scale: number};
-
 export const HOOK = {
-  lines: ['VOS PROJETS'],
-  lines2: ['ONT BESOIN', 'D’[ÉNERGIE.]'],
-  media: 'g330_34' as MediaKey,
-  // Détail serré : panneau de commande, baseline, prises et grilles du 330 kVA
-  viewFrom: {cx: 640, cy: 540, scale: 1.5} as View,
-  viewTo: {cx: 610, cy: 540, scale: 1.5} as View,
+  label: 'QUEL QUE SOIT LE CONTEXTE',
+  /** Mots qui défilent sur les croches, chacun sur un aplat différent. */
+  words: ['CHANTIER.', 'ÉVÉNEMENT.', 'INDUSTRIE.', 'URGENCE.'],
+  question: ['BESOIN', 'D’[ÉNERGIE] ?'],
+  answer: ['BEB', 'S’EN [CHARGE.]'],
 };
 
-export const REVEAL = {
-  lines: ['NOUS LA METTONS', 'EN [ACTION.]'],
-  media: 'g66_34_cut' as MediaKey,
-  /** Boîte englobante de la machine dans la photo détourée (calculée par make_cutouts.py). */
-  bbox: {x: 406, y: 122, w: 1169, h: 1084},
+export const LEADER = {
+  kicker: 'BEB,',
+  word: 'LEADER',
+  line: 'EN BRETAGNE',
+  sub: ['Depuis 40 ans, l’énergie', 'des professionnels.'],
 };
 
-export type Expertise = {
-  id: 'vente' | 'location' | 'maintenance';
-  index: string;
-  word: string;
-  sub: string[];
-  tag: string;
-  theme: 'dark' | 'light';
-  media: MediaKey;
-  viewFrom: View;
-  viewTo: View;
-  /** Détail technique encadré par le tracé (coordonnées source), optionnel. */
-  marker?: {x: number; y: number; w: number; h: number};
+export const STATS = {
+  label: 'BEB EN CHIFFRES',
+  items: [
+    {value: 40, suffix: '', label: 'ANS D’EXPÉRIENCE'},
+    {value: 39, suffix: '', label: 'COLLABORATEURS'},
+    {value: 1300, suffix: '', label: 'CONTRATS D’ENTRETIEN'},
+    {value: 15000, suffix: ' m²', label: 'D’ATELIER ET DE STOCKAGE'},
+  ],
 };
 
-export const EXPERTISES: Expertise[] = [
-  {
-    id: 'vente',
-    index: '01',
-    word: 'VENTE',
-    sub: ['La puissance adaptée', 'à vos besoins.'],
-    tag: 'NEUF ET OCCASION',
-    theme: 'dark',
-    media: 'g330_34',
-    // Le plus gros groupe, cadré sans le marquage « LOUEUR » : mouvement vertical (élévation)
-    viewFrom: {cx: 810, cy: 660, scale: 0.9},
-    viewTo: {cx: 810, cy: 600, scale: 0.9},
-  },
-  {
-    id: 'location',
-    index: '02',
-    word: 'LOCATION',
-    sub: ['L’énergie au rythme', 'de vos projets.'],
-    tag: 'DE 40 À 2 500 kVA',
-    theme: 'light',
-    media: 'g66_face_cut',
-    // Marquage réel « LOUEUR D’ÉNERGIE » + numéro de parc « 60-04 » : travelling latéral
-    viewFrom: {cx: 1080, cy: 640, scale: 0.68},
-    viewTo: {cx: 990, cy: 640, scale: 0.68},
-  },
-  {
-    id: 'maintenance',
-    index: '03',
-    word: 'MAINTENANCE',
-    sub: ['La fiabilité', 's’entretient.'],
-    tag: 'SAV 24H/24 · 7J/7',
-    theme: 'dark',
-    media: 'g66_34',
-    // Tableau de commande, disjoncteurs et prises : poussée lente + mise au point
-    viewFrom: {cx: 690, cy: 470, scale: 1.42},
-    viewTo: {cx: 690, cy: 470, scale: 1.56},
-    marker: {x: 592, y: 244, w: 190, h: 118},
-  },
-];
+export const METIERS = {
+  label: 'SOLUTIONS CLÉ EN MAIN',
+  words: ['VENTE[.]', 'LOCATION[.]', 'MAINTENANCE[.]'],
+};
 
-/** Plans du montage « À VOS CÔTÉS. » — uniquement des détails réels des machines fournies. */
-export const TERRAIN_SHOTS: {media: MediaKey; from: View; to: View; caption: string}[] = [
-  {media: 'g330_34', from: {cx: 470, cy: 430, scale: 1.55}, to: {cx: 500, cy: 430, scale: 1.55}, caption: 'Panneau de commande 330 kVA'},
-  {media: 'g66_face', from: {cx: 560, cy: 1050, scale: 1.55}, to: {cx: 530, cy: 1050, scale: 1.55}, caption: 'Numéro de parc 60-04'},
-  {media: 'g330_34', from: {cx: 930, cy: 470, scale: 1.35}, to: {cx: 960, cy: 470, scale: 1.35}, caption: 'Grilles et portes 330 kVA'},
-  {media: 'g66_34', from: {cx: 690, cy: 400, scale: 1.7}, to: {cx: 660, cy: 400, scale: 1.7}, caption: 'Contrôleur 66 kVA'},
-  {media: 'g66_34', from: {cx: 600, cy: 700, scale: 1.65}, to: {cx: 630, cy: 700, scale: 1.65}, caption: 'Prises et disjoncteurs'},
-  {media: 'g330_34', from: {cx: 790, cy: 1040, scale: 1.4}, to: {cx: 760, cy: 1040, scale: 1.4}, caption: 'Numéro de parc 305-13'},
-];
+export type Picto = 'generator' | 'compressor' | 'mast';
 
-/** Emplacements prévus pour les vraies photos de terrain (version de travail). */
-export const TERRAIN_PLACEHOLDERS = [
-  'Intervention d’un technicien BEB',
-  'Groupe installé sur site client',
-  'Livraison / mise en place',
-  'Raccordement électrique',
-  'Atelier de maintenance',
-  'Équipe BEB sur le terrain',
-];
+export const MATERIELS = {
+  label: 'EN LOCATION',
+  cards: [
+    {picto: 'generator' as Picto, name: ['GROUPES', 'ÉLECTROGÈNES'], spec: 'DE 40 À 2 500 kVA', tag: 'INSONORISÉS · STAGE V'},
+    {picto: 'compressor' as Picto, name: ['COMPRESSEURS', 'THERMIQUES'], spec: '5 000 À 25 000 L/MIN', tag: 'INSONORISÉS · STAGE V'},
+    {picto: 'mast' as Picto, name: ['MÂTS', 'D’ÉCLAIRAGE'], spec: 'AUTONOMES', tag: 'BTP · INDUSTRIE · ÉVÉNEMENTIEL'},
+  ],
+  ticker: 'BANCS DE CHARGE · CUVES GNR · ARMOIRES DE DISTRIBUTION · COFFRETS · CÂBLES BT · ',
+};
 
-export const TERRAIN = {
-  line1: 'À VOS CÔTÉS.',
-  line2: 'SUR LE [TERRAIN.]',
-  networkLabel: '5 AGENCES · GRAND OUEST',
-  /** Coordonnées GPS des 5 villes d'agences citées sur le site (ordre de tracé du réseau). */
+export const PROXIMITE = {
+  title: ['PROCHES', 'DE [VOUS.]'],
+  label: '5 AGENCES DANS LE GRAND OUEST',
+  /** Coordonnées GPS réelles des villes d'agences. `side` : position de l'étiquette. */
   agencies: [
-    {name: 'BREST', lat: 48.3904, lon: -4.4861, labelSide: 'below'},
-    {name: 'SAINT-BRIEUC', lat: 48.5142, lon: -2.7653, labelSide: 'above'},
-    {name: 'RENNES', lat: 48.1173, lon: -1.6778, labelSide: 'above'},
-    {name: 'NANTES', lat: 47.2184, lon: -1.5536, labelSide: 'left'},
-    {name: 'LORIENT', lat: 47.7483, lon: -3.3700, labelSide: 'below'},
-  ] as {name: string; lat: number; lon: number; labelSide: 'above' | 'below' | 'left' | 'right'}[],
+    {name: 'BREST', lat: 48.3904, lon: -4.4861, side: 'below'},
+    {name: 'SAINT-BRIEUC', lat: 48.5142, lon: -2.7653, side: 'above'},
+    {name: 'RENNES', lat: 48.1173, lon: -1.6778, side: 'right'},
+    {name: 'LORIENT', lat: 47.7483, lon: -3.37, side: 'below'},
+    {name: 'NANTES', lat: 47.2184, lon: -1.5536, side: 'left'},
+  ] as {name: string; lat: number; lon: number; side: 'above' | 'below' | 'left' | 'right'}[],
 };
 
-export const SIGNATURE = {
-  lines: ['L’énergie', 'des possibles.'],
+export const ASTREINTE = {
+  center: 'H24',
+  word: 'ASTREINTE',
+  line: '24H/24 · [7J/7]',
+  sub: 'Nos techniciens interviennent jour et nuit.',
 };
 
-export const CTA = {
-  lines: ['UN PROJET ?'],
-  lines2: ['PARLONS', '[ÉNERGIE.]'],
+export const REACTIVITE = {
+  word: 'RÉACTIVITÉ.',
+  sub: ['Une source d’énergie fiable,', 'en toutes circonstances.'],
+  slogan: ['PRÉVOIR', 'LES [IMPRÉVUS.]'],
+};
+
+export const DEVIS = {
+  lines: ['UN PROJET ?', 'UNE [URGENCE ?]'],
+  button: 'DEMANDEZ VOTRE DEVIS',
   phone: '09 73 44 55 55',
   website: 'groupe-beb.com',
+  ticker: 'L’ÉNERGIE DES POSSIBLES · ',
 };
