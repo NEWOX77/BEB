@@ -1,0 +1,30 @@
+{
+  "name": "beb-motion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BEB — film de marque motion design « L'énergie des possibles » (Remotion)",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render BEB-Main out/BEB_energie-des-possibles_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=14 --x264-preset=slow",
+    "render:draft": "remotion render BEB-Draft out/BEB_version-de-travail_1080x1920.mp4 --image-format=png --pixel-format=yuv420p --crf=18",
+    "still": "remotion still BEB-Main out/still.png",
+    "audio": "python3 scripts/generate_audio.py",
+    "cutouts": "python3 scripts/make_cutouts.py",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.535",
+    "@remotion/fonts": "4.0.535",
+    "@remotion/layout-utils": "4.0.535",
+    "@remotion/media-utils": "4.0.535",
+    "@remotion/paths": "4.0.535",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@fontsource/space-grotesk": "5.2.10",
+    "@types/react": "19.1.12",
+    "typescript": "5.9.2"
+  }
+}
